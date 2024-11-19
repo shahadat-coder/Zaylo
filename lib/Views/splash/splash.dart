@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 5), () {
-      Get.toNamed(RouteNames.login);
+      Get.toNamed(RouteNames.welcome);
     });
   }
 

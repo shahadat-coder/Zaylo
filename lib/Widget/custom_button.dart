@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:zaylo/utils/colors.dart';
 
 class CustomButton extends StatefulWidget {
-  const CustomButton({Key? key, required this.title, this.onTap, this.backgroundColor, this.titleColor}) : super(key: key);
+  const CustomButton({
+    Key? key,
+    required this.title,
+    this.onTap,
+    this.backgroundColor,
+    this.titleColor,
+  }) : super(key: key);
 
   final String title;
   final void Function()? onTap;
@@ -16,26 +21,21 @@ class CustomButton extends StatefulWidget {
 class _CustomButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return InkWell(
-      onTap: widget.onTap,
-      child: Container(
-        width: size.width,
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        decoration: BoxDecoration(
-          color: widget.backgroundColor ?? AppColors.primaryColors,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child:  Center(
-          child: Text(
-            widget.title,
-            style:  TextStyle(
-              color:widget.titleColor ?? Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
-
+    return ElevatedButton(
+      onPressed: widget.onTap,
+      style: ElevatedButton.styleFrom(
+        shape: const StadiumBorder(),
+        elevation: 5, // Adjust elevation as needed
+        backgroundColor: widget.backgroundColor ?? Colors.blue, // Default color
+        shadowColor: Colors.grey.withOpacity(0.5),
+        minimumSize: const Size.fromHeight(60), // Button height
+      ),
+      child: Text(
+        widget.title,
+        style: TextStyle(
+          color: widget.titleColor ?? Colors.white, // Default text color
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

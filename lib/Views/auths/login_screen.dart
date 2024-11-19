@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-
-import '../../utils/colors.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zaylo/utils/colors.dart';
+import '../../Widget/custom_button.dart';
+import '../../Widget/custom_text_field.dart';
+import '../forget_pass/forget_password.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,151 +14,136 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  late Color myColor;
-  late Size mediaSize;
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  bool rememberUser = false;
+  final GlobalKey<FormState> globalkey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
+
+  String email = '';
+  String pass = '';
+
+  String validPass = '';
+  String validUser = '';
+
+  getUsernamePassword() {
+    SharedPreferences.getInstance().then((value) {
+      setState(() {
+        validUser = value.getString('email') ?? '';
+        validPass = value.getString('password') ?? '';
+      });
+
+      print('Valid user $validUser\nValid password $validPass');
+    });
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter an Email';
+    }
+    RegExp emailReg = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailReg.hasMatch(value)) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a password';
+    }
+    return null;
+  }
+
+  void _submitForm() {
+    if (globalkey.currentState!.validate()) {
+      if (_emailController.text != validUser) {
+        Get.snackbar('Invalid email', 'The email you entered is invalid');
+        return;
+      }
+
+      if (_passController.text != validPass) {
+        Get.snackbar('Invalid password', 'Account password is incorrect, Try again!');
+        return;
+      }
+
+      // Everything is correct now navigate to home
+      // Get.to(const BottomNavBaseScreen());
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUsernamePassword();
+  }
 
   @override
   Widget build(BuildContext context) {
-    myColor = Theme.of(context).primaryColor;
-    mediaSize = MediaQuery.of(context).size;
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.black12,
-        image: DecorationImage(
-          image: const AssetImage("assets/images/bg.png"),
-          fit: BoxFit.cover,
-          colorFilter:
-          ColorFilter.mode(myColor.withOpacity(0.3), BlendMode.dstATop),
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(children: [
-          Positioned(bottom: 0, child: _buildBottom()),
-        ]),
-      ),
-    );
-  }
-
-  Widget _buildBottom() {
-    return SizedBox(
-      width: mediaSize.width,
-      child: Card(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
-            )),
+    return Scaffold(
+      body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: _buildForm(),
+          padding: const EdgeInsets.only(top: 15, left: 10, right: 10, bottom: 10),
+          child: Form(
+            key: globalkey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    'Email Address',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+            CustomTextField(label: 'Email', hintText: 'Enter the Email',),
+                const SizedBox(height: 8),
+                const Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text(
+                    'Password',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                CustomTextField(label: 'Password', hintText: 'Enter the password',),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      Get.to(const ForgetPasswordScreen());
+                    },
+                    child: const Text(
+                      'Forget Password?',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: AppColors.greenColors,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: CustomButton(
+                    title: 'Login',
+                    onTap: email.isEmpty || pass.isEmpty ? null : _submitForm,
+                    backgroundColor: email.isEmpty || pass.isEmpty
+                        ? AppColors.greenColors.withOpacity(.2)
+                        : AppColors.greenColors,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Welcome",
-          style: TextStyle(
-              color: myColor, fontSize: 32, fontWeight: FontWeight.w500),
-        ),
-        _buildGreyText("Please login with your information"),
-        const SizedBox(height: 60),
-        _buildGreyText("Email address"),
-        _buildInputField(emailController),
-        const SizedBox(height: 40),
-        _buildGreyText("Password"),
-        _buildInputField(passwordController, isPassword: true),
-        const SizedBox(height: 20),
-        _buildRememberForgot(),
-        const SizedBox(height: 20),
-        _buildLoginButton(),
-        const SizedBox(height: 20),
-        _buildOtherLogin(),
-      ],
-    );
-  }
-
-  Widget _buildGreyText(String text) {
-    return Text(
-      text,
-      style: const TextStyle(color: Colors.grey,),
-    );
-  }
-
-  Widget _buildInputField(TextEditingController controller,
-      {isPassword = false}) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        suffixIcon: isPassword ? const Icon(Icons.remove_red_eye) : const Icon(Icons.done),
-      ),
-      obscureText: isPassword,
-    );
-  }
-
-  Widget _buildRememberForgot() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Checkbox(
-                value: rememberUser,
-                onChanged: (value) {
-                  setState(() {
-                    rememberUser = value!;
-                  });
-                }),
-            _buildGreyText("Remember me"),
-          ],
-        ),
-        TextButton(
-            onPressed: () {}, child: _buildGreyText("I forgot my password"))
-      ],
-    );
-  }
-
-  Widget _buildLoginButton() {
-    return ElevatedButton(
-      onPressed: () {
-        debugPrint("Email : ${emailController.text}");
-        debugPrint("Password : ${passwordController.text}");
-      },
-      style: ElevatedButton.styleFrom(
-        shape: const StadiumBorder(),
-        elevation: 25,
-        backgroundColor: AppColors.primaryColors,
-        shadowColor: Colors.grey,
-        minimumSize: const Size.fromHeight(60),
-      ),
-      child: const Text("LOGIN",style: TextStyle(color: AppColors.secondaryColors),),
-    );
-  }
-
-  Widget _buildOtherLogin() {
-    return Center(
-      child: Column(
-        children: [
-          _buildGreyText("Or Login with"),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-             IconButton(onPressed: (){}, icon: Image.asset("assets/images/facebook.png",width: 40,height: 40,)),
-              SizedBox(width: 15,),
-              IconButton(onPressed: (){}, icon: Image.asset("assets/images/google.png",width: 40,height: 40,)),
-
-            ],
-          )
-        ],
       ),
     );
   }
