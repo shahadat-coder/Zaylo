@@ -1,10 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zaylo/utils/colors.dart';
+import 'package:zaylo/Routes/route_name.dart';
 import '../../Widget/custom_button.dart';
 import '../../Widget/custom_text_field.dart';
 import '../forget_pass/forget_password.dart';
+import '../home/home_screens.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,35 +16,31 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final GlobalKey<FormState> globalkey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  String email = '';
-  String pass = '';
+  final _auth = FirebaseAuth.instance;
 
-  String validPass = '';
-  String validUser = '';
 
-  getUsernamePassword() {
-    SharedPreferences.getInstance().then((value) {
-      setState(() {
-        validUser = value.getString('email') ?? '';
-        validPass = value.getString('password') ?? '';
-      });
+  String _email = '';
+  String _password = '';
+  String _validUser = '';
+  String _validPassword = '';
 
-      print('Valid user $validUser\nValid password $validPass');
+  Future<void> _getUsernamePassword() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _validUser = prefs.getString('email') ?? '';
+      _validPassword = prefs.getString('password') ?? '';
     });
   }
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter an Email';
+      return 'Please enter an email';
     }
-    RegExp emailReg = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailReg.hasMatch(value)) {
-      return 'Please enter a valid email';
-    }
+    // Add more robust email validation if needed
     return null;
   }
 
@@ -50,98 +48,107 @@ class _LoginScreenState extends State<LoginScreen> {
     if (value == null || value.isEmpty) {
       return 'Please enter a password';
     }
+    // Add password strength validation if needed
     return null;
   }
 
-  void _submitForm() {
-    if (globalkey.currentState!.validate()) {
-      if (_emailController.text != validUser) {
+  void _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      if (_emailController.text != _validUser) {
         Get.snackbar('Invalid email', 'The email you entered is invalid');
+        Get.to(()=>const HomeScreens());
         return;
       }
 
-      if (_passController.text != validPass) {
-        Get.snackbar('Invalid password', 'Account password is incorrect, Try again!');
+      if (_passwordController.text != _validPassword) {
+        Get.snackbar('Invalid password', 'Account password is incorrect. Try again!');
         return;
       }
 
-      // Everything is correct now navigate to home
-      // Get.to(const BottomNavBaseScreen());
+      try {
+        // Sign in with Firebase
+        await _auth.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+        // Show success message or navigate
+        Get.snackbar('Success', 'You are now logged in!');
+      } catch (e) {
+        // Handle Firebase authentication errors
+        Get.snackbar('Error', e.toString());
+      }
     }
   }
+
 
   @override
   void initState() {
     super.initState();
-    getUsernamePassword();
+    _getUsernamePassword();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 15, left: 10, right: 10, bottom: 10),
-          child: Form(
-            key: globalkey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Text(
-                    'Email Address',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Your Email',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w400,
                 ),
-                const SizedBox(height: 10),
-            CustomTextField(label: 'Email', hintText: 'Enter the Email',),
-                const SizedBox(height: 8),
-                const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Text(
-                    'Password',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+              ),
+              const SizedBox(height: 10),
+              CustomTextField(
+                label: 'Email',
+                hintText: 'Enter the Email',
+                controller: _emailController,
+                validator: _validateEmail,
+                onChanged: (value) => _email = value,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Password',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w400,
                 ),
-                const SizedBox(height: 10),
-                CustomTextField(label: 'Password', hintText: 'Enter the password',),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      Get.to(const ForgetPasswordScreen());
-                    },
-                    child: const Text(
-                      'Forget Password?',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: AppColors.greenColors,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+              ),
+              const SizedBox(height: 10),
+              CustomTextField(
+                label: 'Password',
+                hintText: 'Enter the password',
+                controller: _passwordController,
+                validator: _validatePassword,
+                isSecured: true,
+                onChanged: (value) => _password = value,
+              ),
+
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    Get.to(const ForgetPasswordScreen());
+                  }, child: Text("Forget Password"),
+                  // ...
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: CustomButton(
-                    title: 'Login',
-                    onTap: email.isEmpty || pass.isEmpty ? null : _submitForm,
-                    backgroundColor: email.isEmpty || pass.isEmpty
-                        ? AppColors.greenColors.withOpacity(.2)
-                        : AppColors.greenColors,
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                child: CustomButton(
+                  title: 'Login',
+                  onTap: _submitForm,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

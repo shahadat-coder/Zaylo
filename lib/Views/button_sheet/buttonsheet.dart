@@ -30,8 +30,8 @@ class ButtonsheetWidget extends StatelessWidget {
           LoginScreen(),
         ],
         tabBarProperties: const TabBarProperties(
-          indicatorColor: AppColors.greenColors,
-          labelColor: AppColors.greenColors,
+          indicatorColor: AppColors.primaryColors,
+          labelColor: AppColors.primaryColors,
           unselectedLabelColor: Colors.black,
 
         ),

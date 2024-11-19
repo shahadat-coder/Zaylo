@@ -1,10 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zaylo/Routes/route_destinations.dart';
 import 'package:zaylo/Routes/route_name.dart';
 import 'package:zaylo/utils/theme.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

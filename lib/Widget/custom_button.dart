@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/colors.dart';
+
 class CustomButton extends StatefulWidget {
   const CustomButton({
     Key? key,
@@ -25,9 +27,9 @@ class _CustomButtonState extends State<CustomButton> {
       onPressed: widget.onTap,
       style: ElevatedButton.styleFrom(
         shape: const StadiumBorder(),
-        elevation: 5, // Adjust elevation as needed
-        backgroundColor: widget.backgroundColor ?? Colors.blue, // Default color
-        shadowColor: Colors.grey.withOpacity(0.5),
+        elevation: 20, // Adjust elevation as needed
+        backgroundColor: widget.backgroundColor ?? AppColors.primaryColors, // Default color
+        shadowColor: Colors.grey.withOpacity(0.8),
         minimumSize: const Size.fromHeight(60), // Button height
       ),
       child: Text(

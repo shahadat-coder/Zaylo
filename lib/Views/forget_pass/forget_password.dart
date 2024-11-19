@@ -63,16 +63,22 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 hintText: 'Eg namaemail@emailkamu.com',
+                hintStyle: TextStyle(
+                  color: Colors.black38,
+                  fontSize: 15.0,
+                ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                   borderSide: const BorderSide(
                     color: Colors.black87, // Change border color here
+                      width: 0.2
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                   borderSide: const BorderSide(
                     color: Colors.black87, // Change border color here
+                    width: 0.2
                   ),
                 ),
               ),
@@ -89,7 +95,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     TextSpan(
                       text: ' Sign in',
                       style: TextStyle(
-                        color: AppColors.greenColors,
+                        color: AppColors.primaryColors,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -104,12 +110,11 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                 title: 'Submit',
                 onTap: () {
                   if (!email.isEmpty) {
-                    //Get.to(const SuccessScreen());
                   }
                 },
                 backgroundColor: email.isEmpty
-                    ? AppColors.greenColors.withOpacity(.2)
-                    : AppColors.greenColors,
+                    ? AppColors.primaryColors.withOpacity(.2)
+                    : AppColors.primaryColors,
               ),
             ),
           ]),

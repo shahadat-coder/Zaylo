@@ -1,7 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:zaylo/Widget/custom_button.dart';
-import 'package:zaylo/utils/colors.dart';
-
 import '../../Widget/custom_text_field.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -12,14 +12,22 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final GlobalKey<FormState> globalkey = GlobalKey<FormState>();
-  String name = '';
-  String email = '';
-  String password = '';
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String? _validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your name';
+    }
+    return null;
+  }
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter an Email';
+      return 'Please enter an email';
     }
     RegExp emailReg = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailReg.hasMatch(value)) {
@@ -32,86 +40,78 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (value == null || value.isEmpty) {
       return 'Please enter a password';
     }
+    // Add password strength validation if needed
     return null;
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _passwordController.dispose();
+    _emailController.dispose();
+  }
+
   void _submitForm() {
-    if (globalkey.currentState!.validate()) {}
+    if (_formKey.currentState!.validate()) {
+      _auth.createUserWithEmailAndPassword(
+          email: _emailController.text.toString(),
+          password: _passwordController.text.toString());
+         //The  massage will show!
+          Get.snackbar('Good Work', 'Successfully SignUp ');
+
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding:
-        const EdgeInsets.only(top: 15, left: 10, right: 10, bottom: 10),
+    return Scaffold(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Form(
-          key: globalkey,
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: Text(
-                  'Full Name',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w600,
-                  ),
+
+              const SizedBox(height: 10),
+              const Text(
+                'Email Address',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
-              const SizedBox(
-                height: 10,
+              const SizedBox(height: 10),
+              CustomTextField(
+                label: 'Email',
+                hintText: 'Enter your email',
+                controller: _emailController,
+                validator: _validateEmail,
               ),
-        CustomTextField(label: 'Name', hintText: 'Enter the name',),
-              const SizedBox(
-                height: 8,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: Text(
-                  'Email Address',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w600,
-                  ),
+              const SizedBox(height: 8),
+              const Text(
+                'Password',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
-              const SizedBox(
-                height: 10,
+              const SizedBox(height: 10),
+              CustomTextField(
+                label: 'Password',
+                hintText: 'Enter your password',
+                controller: _passwordController,
+                validator: _validatePassword,
+                isSecured: true,
               ),
-        CustomTextField(label: 'Email', hintText: 'Enter the email',),
-              const SizedBox(
-                height: 8,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: Text(
-                  'Password',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              CustomTextField(label: 'Password', hintText: 'Enter the password',),
               Padding(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 child: CustomButton(
-                  title: 'Registration',
-                  onTap: name.isEmpty || email.isEmpty || password.isEmpty
-                      ? null : _submitForm,
-                  backgroundColor:
-                  name.isEmpty || email.isEmpty || password.isEmpty
-                      ? AppColors.greenColors.withOpacity(.2)
-                      : AppColors.greenColors,
+                  title: 'Register',
+                  onTap: _submitForm,
                 ),
               ),
             ],

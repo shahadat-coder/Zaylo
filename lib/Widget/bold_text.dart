@@ -15,7 +15,7 @@ class BoldText extends StatelessWidget {
         wordSpacing: 0.15,
         fontWeight: FontWeight.w500,
         fontSize: 25,
-        color: AppColors.redColors,
+        color: Colors.black,
 
       ),
     );
