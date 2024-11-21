@@ -18,13 +18,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isPasswordVisible = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  String? _validateName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your name';
-    }
-    return null;
-  }
-
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter an email';
@@ -87,7 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               CustomTextField(
                 label: 'Email',
                 hintText: 'Enter your email',
-                hintStyle: TextStyle(
+                hintStyle: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w300
                 ),
@@ -107,7 +100,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               CustomTextField(
                 label: 'Password',
                 hintText: 'Enter your password',
-                hintStyle: TextStyle(
+                hintStyle: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w300
                 ),

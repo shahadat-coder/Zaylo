@@ -6,7 +6,6 @@ import 'package:zaylo/Routes/route_name.dart';
 import '../../Widget/custom_button.dart';
 import '../../Widget/custom_text_field.dart';
 import '../forget_pass/forget_password.dart';
-import '../home/home_screens.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
