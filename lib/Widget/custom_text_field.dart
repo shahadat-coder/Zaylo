@@ -2,26 +2,26 @@ import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 
 class CustomTextField extends StatefulWidget {
-  final String label;
+  final String? label;
   final String hintText;
   final bool isSecured;
   final Widget? trailing;
   final TextStyle? labelStyle;
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String? Function(String?)? validator; // Function to validate input
   final TextStyle? hintStyle;
   final void Function(String)? onChanged;
 
   const CustomTextField({
     super.key,
-    required this.label,
+    this.label,
     required this.hintText,
     this.isSecured = false, // Default to false
     this.trailing,
     this.onChanged, // Deprecated, use controller instead
     this.hintStyle,
     this.labelStyle,
-    required this.controller,
+    this.controller,
     this.validator,
   });
 

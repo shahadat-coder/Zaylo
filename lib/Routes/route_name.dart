@@ -4,4 +4,5 @@ class RouteNames{
   static const String register = '/register';
   static const String welcome = '/welcome';
   static const String buttonsheet = '/buttonsheet';
+  static const String buttonNav = '/buttonNav';
 }

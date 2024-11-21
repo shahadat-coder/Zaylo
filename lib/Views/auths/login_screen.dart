@@ -19,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  bool _isPasswordVisible = false;
   final _auth = FirebaseAuth.instance;
 
 
@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       if (_emailController.text != _validUser) {
         Get.snackbar('Invalid email', 'The email you entered is invalid');
-        Get.to(()=>const HomeScreens());
+        Get.toNamed(RouteNames.buttonNav);
         return;
       }
 
@@ -108,7 +108,11 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 10),
               CustomTextField(
                 label: 'Email',
-                hintText: 'Enter the Email',
+                hintText: 'Enter the email',
+                hintStyle: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w300
+                ),
                 controller: _emailController,
                 validator: _validateEmail,
                 onChanged: (value) => _email = value,
@@ -126,6 +130,20 @@ class _LoginScreenState extends State<LoginScreen> {
               CustomTextField(
                 label: 'Password',
                 hintText: 'Enter the password',
+                hintStyle: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w300
+                ),
+                trailing: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible; // Toggle visibility
+                    });
+                  },
+                  icon: Icon(
+                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                  ),
+                ),
                 controller: _passwordController,
                 validator: _validatePassword,
                 isSecured: true,

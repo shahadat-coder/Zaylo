@@ -7,6 +7,8 @@ import 'package:zaylo/Views/button_sheet/buttonsheet.dart';
 import 'package:zaylo/Views/splash/splash.dart';
 import 'package:zaylo/Views/welcome/welcome_screen.dart';
 
+import '../Views/navigation_bar/navigation_bar.dart';
+
 class RouteDestinations{
   static List<GetPage> pages = [
     GetPage(
@@ -28,6 +30,10 @@ class RouteDestinations{
     GetPage(
       name: RouteNames.buttonsheet,
       page: ()=> const ButtonsheetWidget(),
+    ),
+    GetPage(
+      name: RouteNames.buttonNav,
+      page: ()=> const BottomNavBaseScreen(),
     ),
   ];
 

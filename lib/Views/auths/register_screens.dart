@@ -15,7 +15,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  bool _isPasswordVisible = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   String? _validateName(String? value) {
@@ -87,6 +87,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               CustomTextField(
                 label: 'Email',
                 hintText: 'Enter your email',
+                hintStyle: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w300
+                ),
                 controller: _emailController,
                 validator: _validateEmail,
               ),
@@ -103,10 +107,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
               CustomTextField(
                 label: 'Password',
                 hintText: 'Enter your password',
-                controller: _passwordController,
-                validator: _validatePassword,
-                isSecured: true,
-              ),
+                hintStyle: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w300
+                ),
+                trailing: IconButton(
+    onPressed: () {
+    setState(() {
+    _isPasswordVisible = !_isPasswordVisible; // Toggle visibility
+    });
+    },
+    icon: Icon(
+    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+    ),
+    ),
+    controller: _passwordController,
+    validator: _validatePassword, // Ensure this method exists
+    isSecured: !_isPasswordVisible, // Pass the state to the CustomTextField
+    ),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 child: CustomButton(
