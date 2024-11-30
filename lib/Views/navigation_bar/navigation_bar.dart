@@ -9,7 +9,7 @@ import '../../utils/colors.dart';
 
 
 class BottomNavBaseScreen extends StatefulWidget {
-  const BottomNavBaseScreen({Key? key}) : super(key: key);
+  const BottomNavBaseScreen({super.key});
 
   @override
   State<BottomNavBaseScreen> createState() => _BottomNavBaseScreenState();
@@ -39,23 +39,23 @@ class _BottomNavBaseScreenState extends State<BottomNavBaseScreen> {
         },
         items:  [
           SalomonBottomBarItem(
-            icon: Icon(Icons.home),
-            title: Text("Home"),
+            icon: Image.asset('assets/images/home.png',width: 25,height: 25,),
+            title: const Text("Home"),
             selectedColor: Colors.black,
           ),
           SalomonBottomBarItem(
-            icon: Icon(Icons.card_travel),
-            title: Text("Checkout"),
+            icon: Image.asset('assets/images/check.png',width: 25,height: 25,),
+            title: const Text("Checkout"),
             selectedColor: Colors.black,
           ),
           SalomonBottomBarItem(
-            icon: Icon(Icons.favorite_border),
-            title: Text("Wish"),
+            icon: Image.asset('assets/images/heart.png',width: 25,height: 25,),
+            title: const Text("Wish"),
             selectedColor: Colors.black,
           ),
           SalomonBottomBarItem(
-            icon: Icon(Icons.person),
-            title: Text("Profile"),
+            icon: Image.asset('assets/images/user.png',width: 25,height: 25,),
+            title: const Text("Profile"),
             selectedColor: Colors.black,
           ),
         ],

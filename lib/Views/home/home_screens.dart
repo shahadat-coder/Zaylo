@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zaylo/Views/home/item_card.dart';
 import 'package:zaylo/Widget/carousel_slider.dart';
 import 'package:zaylo/Widget/custom_text_field.dart';
 import 'package:zaylo/utils/colors.dart';
@@ -59,7 +60,11 @@ class _HomeScreensState extends State<HomeScreens> {
                   ],),
                   const SizedBox(height: 15,),
                   const MainText(title: 'All Items',),
-
+                  const SizedBox(height: 15,),
+                  const SizedBox(
+                    height: 500,
+                      child: ItemCart()
+                  )
 
                 ],
               ),
